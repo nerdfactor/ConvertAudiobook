@@ -14,6 +14,11 @@ namespace eu.nerdfactor.ConvertAudiobook {
 		const string ARG_CHAPTERS = "chapters";
 		const string ARG_HELP = "help";
 
+		/// <summary>
+		/// Application main function.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
 		public static async Task Main(string[] args) {
 
 			Argument.ParseArgsArray(args, new List<Argument>() {
@@ -29,20 +34,25 @@ namespace eu.nerdfactor.ConvertAudiobook {
 				return;
 			}
 
+			// Use the provided path to ffmpeg or try to find it at the app location.
 			String ffmpeg = Argument.GetArgument(ARG_FFMPEG).Value;
 			if (String.IsNullOrEmpty(ffmpeg)) {
 				ffmpeg = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + Path.DirectorySeparatorChar + "ffmpeg.exe";
 			}
 			if (!File.Exists(ffmpeg)) {
+				// Ffmpeg is required.
 				Console.WriteLine($"Can't find ffmpeg.exe at {ffmpeg}.");
 				return;
 			}
+
+			// Check the provided source file.
 			if (!File.Exists(Argument.GetArgument(ARG_SOURCE).Value)) {
 				Console.WriteLine($"Can't find source at {Argument.GetArgument(ARG_SOURCE).Value}.");
 				return;
 			}
 
 			try {
+				// Create a Converter and start it.
 				Console.WriteLine($"Converting audiobook {Argument.GetArgument(ARG_SOURCE).Value}.");
 				Converter converter = new Converter(ffmpeg);
 				await converter.Convert(
@@ -58,6 +68,10 @@ namespace eu.nerdfactor.ConvertAudiobook {
 			}
 		}
 
+		/// <summary>
+		/// Prints a help text for the application.
+		/// </summary>
+		/// <returns></returns>
 		public static int PrintHelpText() {
 			Console.WriteLine("ConvertAudiobook v 1.0");
 			Console.WriteLine("Converts an audiobook from .m4b format to .mp3 format.");
